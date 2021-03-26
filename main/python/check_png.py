@@ -26,7 +26,7 @@ def check_png(dateipfad, png_byte_order='big'):
 
 
 def ist_png_datei(byte_reader):
-    erste_acht_byte = bytes_lesen(byte_reader, 8)
+    erste_acht_byte = byte_reader.read(8)
     erwartete_erste_acht_byte = b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'
 
     if erste_acht_byte == erwartete_erste_acht_byte:
@@ -46,34 +46,26 @@ def get_erwartete_groesse(byte_reader, png_byte_order):
 
 def get_ihdr_werte(byte_reader, png_byte_order):
     erwartete_laenge = b'\x00\x00\x00\x0D'
-    laenge = bytes_lesen(byte_reader, 4)
+    laenge = byte_reader.read(4)
 
     erwarteter_ihdr_string = b"IHDR"
-    ihdr_string = bytes_lesen(byte_reader, 4)
+    ihdr_string = byte_reader.read(4)
 
     if erwartete_laenge == laenge and erwarteter_ihdr_string == ihdr_string:
-        breite = int.from_bytes(bytes_lesen(byte_reader, 4), byteorder=png_byte_order)
-        hoehe = int.from_bytes(bytes_lesen(byte_reader, 4), byteorder=png_byte_order)
-        bit_tiefe = int.from_bytes(bytes_lesen(byte_reader, 1), byteorder=png_byte_order)
-        farb_kanaele = get_anzahl_farb_kananaele(int.from_bytes(bytes_lesen(byte_reader, 1), byteorder=png_byte_order))
+        breite = int.from_bytes(byte_reader.read(4), byteorder=png_byte_order)
+        hoehe = int.from_bytes(byte_reader.read(4), byteorder=png_byte_order)
+        bit_tiefe = int.from_bytes(byte_reader.read(1), byteorder=png_byte_order)
+        farb_kanaele = get_anzahl_farb_kananaele(int.from_bytes(byte_reader.read(1), byteorder=png_byte_order))
 
-        kompressions_methode = bytes_lesen(byte_reader, 1)
-        filter_methode = bytes_lesen(byte_reader, 1)
-        interlace_methode = bytes_lesen(byte_reader, 1)
-        crc = bytes_lesen(byte_reader, 4)
+        kompressions_methode = byte_reader.read(1)
+        filter_methode = byte_reader.read(1)
+        interlace_methode = byte_reader.read(1)
+        crc = byte_reader.read(4)
 
         return breite, hoehe, bit_tiefe, farb_kanaele
     else:
         print("Fehler beim Lesen des Image Header (IHDR)")
         return None
-
-
-def bytes_lesen(byte_reader, anzahl_bytes):
-    result = b''
-    for i in range(anzahl_bytes):
-        naechstes_byte = byte_reader.read(1)
-        result += naechstes_byte
-    return result
 
 
 def get_anzahl_farb_kananaele(farbtyp):
