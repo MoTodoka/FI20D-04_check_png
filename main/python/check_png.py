@@ -68,6 +68,14 @@ def get_ihdr_werte(byte_reader, png_byte_order):
         return None
 
 
+def bytes_lesen(byte_reader, anzahl_bytes):
+    result = b''
+    for i in range(anzahl_bytes):
+        naechstes_byte = byte_reader.read(1)
+        result += naechstes_byte
+    return result
+
+
 def get_anzahl_farb_kananaele(farbtyp):
     switcher = {
         0: 1,
@@ -76,14 +84,6 @@ def get_anzahl_farb_kananaele(farbtyp):
         6: 4
     }
     return switcher.get(farbtyp, 0)
-
-
-def bytes_lesen(byte_reader, anzahl_bytes):
-    result = b''
-    for i in range(anzahl_bytes):
-        naechstes_byte = byte_reader.read(1)
-        result += naechstes_byte
-    return result
 
 
 def berechne_bits(ihdr_werte):
